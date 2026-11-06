@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#202c23">
+<meta name="description" content="حاسبة حركة النفط في الخزان - شركة نفط ميسان MOC">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="حاسبة التحويل">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>حساب وقت التحويل | MOC</title>
+<style>
+:root{color-scheme:dark;--ink:#f5ead4;--muted:#c9c2b0;--gold:#e9bd64;--line:#59694c}
+*{box-sizing:border-box}
+body{margin:0;padding:14px;background:radial-gradient(ellipse at 50% -15%,#35452d 0,#18231b 42%,#0d120f 100%);font-family:Tahoma,Arial,sans-serif;color:var(--ink);min-height:100vh}
+.wrap{max-width:540px;margin:auto}
+.panel{background:#202c23;border:1px solid var(--line);border-radius:16px;padding:15px;color:#f5ead4;box-shadow:0 12px 28px #0005}
+.lang{position:absolute;top:12px;left:12px;width:auto;padding:6px 12px;background:#39443c;color:#fff1d8;border:1px solid #77836c;font-size:12px;border-radius:7px}.panel{position:relative}header{text-align:center;border-bottom:1px solid #64704e;padding:5px 0 13px;margin-bottom:13px}
+.company{color:var(--gold);font-size:16px;font-weight:bold}
+.eyebrow{font-size:11px;color:#c9c2b0;letter-spacing:2px;margin:6px}
+h1{font-size:21px;margin:8px 0}
+.subtitle,.muted{font-size:11px;color:#c9c2b0;line-height:1.7}
+.section{font-weight:bold;color:var(--gold);font-size:13px;margin:15px 0 5px}
+label{display:block;font-size:12px;margin:10px 0 5px;color:#eee4d2}
+input,select{box-sizing:border-box;width:100%;height:42px;min-width:0;border-radius:8px;border:1px solid #69735e;background:#121b16;color:#fff1d8;padding:6px;font-size:14px;text-align:center}
+select{appearance:auto;direction:rtl}
+input::placeholder{color:#a5a38e;opacity:.82;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.dategrid,.timegrid{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:6px}
+button{width:100%;border:0;border-radius:9px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer}
+.calc{background:#dda63f;color:#21190d;margin-top:17px}
+.clear{background:#39443c;color:#fff1d8;border:1px solid #77836c;margin-top:9px}
+.result{display:none;background:#263b2b;border:1px solid #82965e;border-radius:11px;padding:14px;margin-top:14px;text-align:center}
+.result.show{display:block}
+.big{font-size:21px;font-weight:bold;margin:10px 0;color:#ffe4a5}
+.error{display:none;background:#542b24;color:#ffe1d9;padding:10px;border-radius:8px;margin-top:10px;font-size:12px}
+.error.show{display:block}
+.live{color:#a8c58b;margin-top:7px}
+.footer{text-align:center;margin-top:10px}
+[hidden]{display:none!important}
+@media(max-width:350px){.grid{gap:6px}.dategrid,.timegrid{gap:4px}input,select{font-size:12px;padding:3px}}
+
+/* MOC clean orange interface refresh */
+:root{color-scheme:light;--ink:#303238;--muted:#85858a;--gold:#f47d3d;--line:#f0e5d9}
+*{box-sizing:border-box}
+body{margin:0;padding:22px 14px 30px;background:#f2f0df;color:var(--ink);font-family:"Tahoma",Arial,sans-serif;min-height:100vh}
+.wrap{max-width:560px;margin:0 auto}
+.panel{position:relative;overflow:visible;background:#fff;border:0;border-radius:25px;padding:0 19px 22px;color:#303238;box-shadow:0 12px 35px rgba(78,65,45,.10)}
+.lang{position:absolute;z-index:2;top:18px;left:18px;width:44px;height:44px;min-width:44px;padding:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.55);font-size:12px;font-weight:800;border-radius:50%;backdrop-filter:blur(8px)}
+header{margin:0 -19px 18px;padding:25px 22px 18px;text-align:center;background:linear-gradient(145deg,#fa8a48,#f47735);border:0;border-radius:0 0 34px 34px;color:#fff;min-height:0}
+.company{font-size:28px;font-weight:800;letter-spacing:.2px;color:rgba(255,255,255,.76);margin:0 0 8px;text-shadow:0 1px 8px rgba(255,255,255,.18);text-align:center}
+.eyebrow{display:none}
+h1{font-size:11.5px;line-height:1.7;margin:0 0 1px;color:#fff;font-weight:700}
+.subtitle{font-size:11.5px;color:rgba(255,255,255,.85);line-height:1.7}
+.muted{font-size:11px;color:#929297;line-height:1.8}
+.section{font-weight:800;color:#e8753b;font-size:14px;margin:20px 0 8px;padding-right:10px;border-right:3px solid #f58a51}
+label{display:block;font-size:12px;margin:11px 0 6px;color:#515158;font-weight:700}
+input,select{width:100%;height:46px;min-width:0;border-radius:13px;border:1px solid #eee9e3;background:#faf9f6;color:#333;padding:7px 10px;font-size:14px;text-align:center;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:#f59a6a;box-shadow:0 0 0 3px rgba(244,125,61,.12)}
+select{appearance:auto;direction:rtl}
+input::placeholder{color:#b5b1ac;opacity:1;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dategrid,.timegrid{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:8px}
+button{width:100%;border:0;border-radius:14px;padding:14px;font-size:14px;font-weight:800;cursor:pointer;transition:transform .15s,filter .15s}
+button:active{transform:scale(.985)}
+.calc{background:linear-gradient(135deg,#fa914f,#f47735);color:white;margin-top:18px;box-shadow:0 7px 16px rgba(244,125,61,.22)}
+.clear{background:linear-gradient(135deg,#fa914f,#f47735);color:#fff;border:0;margin-top:12px;box-shadow:0 7px 16px rgba(244,125,61,.22)}
+.result{display:none;background:#fff8f2;border:1px solid #f6d8c5;border-radius:18px;padding:16px;margin-top:15px;text-align:center}
+.result.show{display:block}
+.big{font-size:22px;font-weight:800;margin:10px 0;color:#ed783d}
+.error{display:none;background:#fff0ec;color:#b94c35;padding:12px;border-radius:12px;margin-top:12px;font-size:12px;border:1px solid #f5d2c8}
+.error.show{display:block}
+.live{color:#dc8154;margin-top:8px}
+.footer{text-align:center;margin-top:16px;color:#aaa;font-size:10px;letter-spacing:.5px}
+[hidden]{display:none!important}
+.edit-toggle{display:flex;align-items:center;gap:8px;margin:8px 0 10px;font-size:11px;color:#777;font-weight:600;cursor:pointer}
+.edit-toggle input{width:15px;height:15px;min-width:15px;accent-color:#f47735;margin:0;cursor:pointer}
+#dateTimeEditor{padding:9px 10px 10px;margin-top:6px;border:1px solid #f1e5dc;border-radius:13px;background:#fdfbf8}
+#dateTimeEditor label{font-size:10px;margin:5px 0 4px}
+#dateTimeEditor select{height:30px;padding:3px 4px;font-size:11px;border-radius:8px}
+#dateTimeEditor .dategrid,#dateTimeEditor .timegrid{gap:5px}
+#dateTimeEditor .muted{font-size:9px;margin-top:6px}
+@media(min-width:600px){body{padding-top:35px}.panel{padding-left:24px;padding-right:24px}header{margin-left:-24px;margin-right:-24px;padding-left:28px;padding-right:28px}}
+@media(max-width:350px){.grid{gap:7px}.dategrid,.timegrid{gap:5px}input,select{font-size:12px;padding:3px}.panel{padding-left:13px;padding-right:13px}header{margin-left:-13px;margin-right:-13px;padding-left:17px;padding-right:17px}}
+/* Fit company title on narrow Android screens; keep the existing font family/style */
+@media(max-width:430px){.company{font-size:22px;letter-spacing:0}}
+@media(max-width:360px){.company{font-size:19px}}
+
+
+/* Olive green theme: same layout and components, alternate palette only */
+.style-toggle{position:absolute;z-index:2;top:70px;left:18px;width:44px;height:44px;min-width:44px;padding:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.55);font-size:12px;font-weight:800;border-radius:50%;backdrop-filter:blur(8px)}
+body.olive{background:#eef0df}
+body.olive .panel{background:#fff;color:#30382f}
+body.olive header{background:linear-gradient(145deg,#82934d,#596d32);color:#fff}
+body.olive .company{color:rgba(255,255,255,.78)}
+body.olive .section{color:#657b3d;border-right-color:#879b55}
+body.olive input:focus,body.olive select:focus{border-color:#91a66a;box-shadow:0 0 0 3px rgba(105,132,62,.13)}
+body.olive .calc,body.olive .clear,body.olive .print-transfer{background:linear-gradient(135deg,#8c9f58,#596f35);color:#fff;box-shadow:0 7px 16px rgba(91,112,52,.22)}
+body.olive .result{background:#f5f8ee;border-color:#d7e1c3}
+body.olive .big{color:#627a3b}
+body.olive .error{background:#f5f2e9;color:#8a5839;border-color:#e8ddc8}
+body.olive .live{color:#718b49}
+body.olive .edit-toggle input{accent-color:#718a43}
+body.olive #dateTimeEditor{border-color:#dce5cf;background:#f8faf3}
+body.olive .style-toggle{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.6)}
+
+
+.tank-transfer{margin-top:13px;gap:10px}
+.tank-transfer label{margin-top:7px}
+.tank-transfer select{height:42px}
+
+.print-transfer{margin-top:18px;background:linear-gradient(135deg,#fa914f,#f47735);color:#fff;border:0;box-shadow:0 7px 16px rgba(244,125,61,.22)}
+/* Match print actions and preview surface to the selected visual style. */
+body.olive .print-transfer{background:linear-gradient(135deg,#8c9f58,#596f35);color:#fff;border:0;box-shadow:0 7px 16px rgba(91,112,52,.22)}
+body.olive .print-page{background:#eef0df}
+body.olive .print-toolbar button{background:linear-gradient(135deg,#8c9f58,#596f35);box-shadow:0 7px 16px rgba(91,112,52,.22)}
+body.olive .print-preview{box-shadow:0 12px 35px rgba(62,78,39,.12)}
+.print-transfer:hover{filter:brightness(1.04)}
+.print-page{position:fixed;inset:0;z-index:20;overflow:auto;background:#f2f0df;padding:16px}
+.print-toolbar{max-width:560px;margin:0 auto 12px;display:flex;gap:9px}
+.print-toolbar button{flex:1;background:linear-gradient(135deg,#fa914f,#f47735);color:#fff;padding:12px}
+.print-preview{max-width:560px;margin:0 auto;background:#fff;border-radius:20px;padding:10px;box-shadow:0 12px 35px rgba(78,65,45,.10)}
+.print-preview img{display:block;width:100%;height:auto;border-radius:12px}
+.share-action{width:100%;margin:14px auto 0;padding-bottom:10px;display:flex;justify-content:center}
+.share-action button{width:auto;max-width:100%;min-height:44px;padding:0 19px;border:1px solid rgba(255,255,255,.28);border-radius:18px;background:linear-gradient(135deg,#fa914f,#f47735);color:#fff;font-size:15px;font-weight:700;box-shadow:0 5px 14px rgba(244,125,61,.22);display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:filter .15s,transform .15s}
+.share-action button:active{transform:scale(.985)}
+.share-action{align-items:center;gap:13px}
+
+
+@media print{body>*{display:none!important}.print-page{display:block!important;position:static;background:white;padding:0}.print-toolbar{display:none}.print-preview{box-shadow:none;max-width:none}}
+
+</style>
+
+<style>
+/* Sculpted layered header texture: identical overlay in every color theme. */
+header{position:relative;isolation:isolate;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.48),inset 0 -1px 0 rgba(255,255,255,.18),0 12px 26px rgba(35,45,55,.13)}
+header::before{content:"";position:absolute;z-index:0;inset:0;background:url("header-folds.svg") center 48% / 100% 100% no-repeat;opacity:.78;mix-blend-mode:soft-light;pointer-events:none}
+header::after{content:"";position:absolute;z-index:0;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.20),transparent 38%,rgba(12,28,42,.10)),linear-gradient(0deg,rgba(255,255,255,.08),transparent 42%);pointer-events:none}
+header>*{position:relative;z-index:1}
+.lang{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 12px rgba(30,40,50,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.panel{box-shadow:0 14px 38px rgba(55,65,75,.12),0 2px 7px rgba(255,255,255,.8) inset}
+.calc{box-shadow:0 8px 18px rgba(60,60,60,.14),inset 0 1px 0 rgba(255,255,255,.38)}
+.result{box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 18px rgba(80,80,80,.06)}
+</style>
+<style>
+/* Five coordinated themes with an arc-shaped theme picker */
+body.theme-flame{--theme:#FF7F50;--theme-dark:#F36B3D;--page:#FFF1EC;--surface:#fff;--soft:#FFF5F1;--border:#FFD0C1;--ink-theme:#713522;--muted-theme:#A66F5D;--focus:rgba(255,127,80,.16)}
+body.theme-copper{--theme:#B5602F;--theme-dark:#93451F;--page:#F5EAE3;--surface:#fff;--soft:#FBF3EE;--border:#E8C8B5;--ink-theme:#713B20;--muted-theme:#967461;--focus:rgba(181,96,47,.15)}
+body.theme-oxide{--theme:#16394F;--theme-dark:#0E2D40;--page:#E8F0F4;--surface:#fff;--soft:#F0F5F8;--border:#C8D9E2;--ink-theme:#16394F;--muted-theme:#6E8796;--focus:rgba(22,57,79,.15)}
+body.theme-retro{--theme:#087A43;--theme-dark:#006732;--page:#E8F0E9;--surface:#fff;--soft:#EFF7F1;--border:#C8DFD0;--ink-theme:#004D27;--muted-theme:#71877A;--focus:rgba(0,103,50,.14)}
+body.theme-midnight-plum{--theme:#3B153A;--theme-dark:#2B0E2B;--page:#F3EAF2;--surface:#fff;--soft:#F8F1F7;--border:#E2D0E0;--ink-theme:#3B153A;--muted-theme:#80657E;--focus:rgba(59,21,58,.15)}
+body.theme-burgundy{--theme:#741C2A;--theme-dark:#60131E;--page:#F5E9EB;--surface:#fff;--soft:#FBF2F3;--border:#E6C9CE;--ink-theme:#60131E;--muted-theme:#92747A;--focus:rgba(96,19,30,.15)}
+body.theme-flame,body.theme-copper,body.theme-oxide,body.theme-retro,body.theme-midnight-plum,body.theme-burgundy{background:radial-gradient(ellipse at top left,color-mix(in srgb,var(--page) 82%,#fff),var(--page) 66%);color:var(--ink-theme)}
+body.theme-flame .panel,body.theme-copper .panel,body.theme-oxide .panel,body.theme-retro .panel,body.theme-midnight-plum .panel,body.theme-burgundy .panel{background:var(--surface);color:inherit}
+body.theme-flame header,body.theme-copper header,body.theme-oxide header,body.theme-retro header,body.theme-midnight-plum header,body.theme-burgundy header{background:linear-gradient(135deg,var(--theme),var(--theme-dark))}
+body.theme-flame .section,body.theme-copper .section,body.theme-oxide .section,body.theme-retro .section,body.theme-midnight-plum .section{color:var(--ink-theme);border-right-color:var(--theme)}
+body.theme-flame input,body.theme-flame select,body.theme-copper input,body.theme-copper select,body.theme-oxide input,body.theme-oxide select,body.theme-retro input,body.theme-retro select,body.theme-midnight-plum input,body.theme-midnight-plum select{background:var(--soft);border-color:var(--border);color:var(--ink-theme)}
+body.theme-flame input:focus,body.theme-flame select:focus,body.theme-copper input:focus,body.theme-copper select:focus,body.theme-oxide input:focus,body.theme-oxide select:focus,body.theme-retro input:focus,body.theme-retro select:focus,body.theme-midnight-plum input:focus,body.theme-midnight-plum select:focus{border-color:var(--theme-dark);box-shadow:0 0 0 3px var(--focus)}
+body.theme-flame .calc,body.theme-flame .clear,body.theme-flame .print-transfer,body.theme-copper .calc,body.theme-copper .clear,body.theme-copper .print-transfer,body.theme-oxide .calc,body.theme-oxide .clear,body.theme-oxide .print-transfer,body.theme-retro .calc,body.theme-retro .clear,body.theme-retro .print-transfer,body.theme-midnight-plum .calc,body.theme-midnight-plum .clear,body.theme-midnight-plum .print-transfer{background:linear-gradient(135deg,var(--theme),var(--theme-dark));color:#fff;box-shadow:0 7px 16px var(--focus)}
+body.theme-flame .result,body.theme-copper .result,body.theme-oxide .result,body.theme-retro .result,body.theme-midnight-plum .result{background:var(--soft);border-color:var(--border)}
+body.theme-flame .big,body.theme-copper .big,body.theme-oxide .big,body.theme-retro .big,body.theme-midnight-plum .big{color:var(--ink-theme)}
+body.theme-flame .live,body.theme-copper .live,body.theme-oxide .live,body.theme-retro .live,body.theme-midnight-plum .live{color:var(--muted-theme)}
+body.theme-flame #dateTimeEditor,body.theme-copper #dateTimeEditor,body.theme-oxide #dateTimeEditor,body.theme-retro #dateTimeEditor,body.theme-midnight-plum #dateTimeEditor{background:var(--soft);border-color:var(--border)}
+body.theme-flame .edit-toggle input,body.theme-copper .edit-toggle input,body.theme-oxide .edit-toggle input,body.theme-retro .edit-toggle input,body.theme-midnight-plum .edit-toggle input{accent-color:var(--theme-dark)}
+body.theme-flame .print-page,body.theme-copper .print-page,body.theme-oxide .print-page,body.theme-retro .print-page,body.theme-midnight-plum .print-page{background:var(--page)}
+body.theme-flame .print-toolbar button,body.theme-copper .print-toolbar button,body.theme-oxide .print-toolbar button,body.theme-retro .print-toolbar button,body.theme-midnight-plum .print-toolbar button,body.theme-flame .share-action button,body.theme-copper .share-action button,body.theme-oxide .share-action button,body.theme-retro .share-action button,body.theme-midnight-plum .share-action button{background:linear-gradient(135deg,var(--theme),var(--theme-dark))}
+.style-menu{position:absolute;z-index:10;top:124px;left:10px;width:335px;height:112px;pointer-events:none}
+.style-menu[hidden]{display:none!important}
+.theme-choice{position:absolute;pointer-events:auto;width:62px;min-width:0;height:62px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:2px solid rgba(255,255,255,.95);border-radius:50%;background:rgba(255,255,255,.96);color:#26352d;font-size:8px;font-weight:800;line-height:1.05;white-space:normal;text-align:center;box-shadow:0 5px 16px rgba(0,0,0,.16);backdrop-filter:blur(10px)}
+.theme-choice:nth-child(1){left:0;top:42px}
+.theme-choice:nth-child(2){left:54px;top:14px}
+.theme-choice:nth-child(3){left:108px;top:0}
+.theme-choice:nth-child(4){left:162px;top:0}
+.theme-choice:nth-child(5){left:216px;top:14px}
+.theme-choice:nth-child(6){left:270px;top:42px}
+.theme-choice .swatch{display:block;width:23px;height:23px;flex:0 0 23px;border-radius:50%;border:1px solid #0002;background:#FF7F50}
+.theme-choice[data-theme="copper"] .swatch{background:#B5602F}
+.theme-choice[data-theme="oxide"] .swatch{background:#16394F}
+.theme-choice[data-theme="retro"] .swatch{background:#006732}
+.theme-choice[data-theme="midnight-plum"] .swatch{background:#3B153A}
+.theme-choice[data-theme="burgundy"] .swatch{background:#60131E}
+.theme-choice.selected{outline:2px solid var(--theme);outline-offset:2px}
+.style-toggle{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.62);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+@media(max-width:430px){.style-menu{left:7px;top:124px;transform:scale(.86);transform-origin:top left}}
+</style>
+<style id="burgundy-theme-fix">
+body.theme-burgundy .panel{background:var(--surface);color:inherit}
+body.theme-burgundy header{background:linear-gradient(135deg,#741C2A,#60131E)!important;color:#fff}
+body.theme-burgundy .section{color:var(--ink-theme);border-right-color:var(--theme)}
+body.theme-burgundy input,body.theme-burgundy select{background:var(--soft);border-color:var(--border);color:var(--ink-theme)}
+body.theme-burgundy input:focus,body.theme-burgundy select:focus{border-color:var(--theme-dark);box-shadow:0 0 0 3px var(--focus)}
+body.theme-burgundy .calc,body.theme-burgundy .clear,body.theme-burgundy .print-transfer,
+body.theme-burgundy .print-toolbar button,body.theme-burgundy .share-action button{
+ background:linear-gradient(135deg,#741C2A,#60131E)!important;color:#fff;
+ box-shadow:0 7px 16px var(--focus)
+}
+body.theme-burgundy .result{background:var(--soft);border-color:var(--border)}
+body.theme-burgundy .big{color:var(--ink-theme)}
+body.theme-burgundy .live{color:var(--muted-theme)}
+body.theme-burgundy #dateTimeEditor{background:var(--soft);border-color:var(--border)}
+body.theme-burgundy .edit-toggle input{accent-color:var(--theme-dark)}
+body.theme-burgundy .print-page{background:var(--page)}
+body.theme-burgundy .print-card,body.theme-burgundy .print-content{border-color:var(--border)}
+</style>
+<style id="clean-theme-gradient">
+/* Clean theme finish: remove decorative texture and keep only a soft light touch at the upper-left. */
+header::before,header::after{content:none!important;display:none!important;background:none!important;}
+header{background:linear-gradient(135deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,0) 42%),linear-gradient(135deg,var(--theme) 0%,var(--theme-dark) 100%)!important;box-shadow:0 10px 24px rgba(35,45,55,.10)!important;}
+body.theme-burgundy header{background:linear-gradient(135deg,rgba(255,255,255,.20),transparent 42%),linear-gradient(135deg,#741C2A,#60131E)!important;}
+</style>
+<style id="compact-header-controls">
+/* Restore the original vertical stack on the left: language above, theme below. */
+.lang,.style-toggle{
+  position:absolute!important;z-index:5!important;left:12px!important;right:auto!important;
+  width:36px!important;height:36px!important;min-width:36px!important;
+  padding:0!important;border-radius:50%!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+}
+.lang{top:9px!important;font-size:10px!important;}
+.style-toggle{top:50px!important;font-size:10px!important;}
+@media(max-width:360px){
+  .lang,.style-toggle{left:10px!important;width:33px!important;height:33px!important;min-width:33px!important;}
+  .lang{top:8px!important;}
+  .style-toggle{top:45px!important;}
+}
+</style>
+
+<style id="themed-share-button">
+/* Integrated theme-colored share capsule with attached circular arrow. */
+.share-action{width:100%;margin:8px auto 0;padding:0 12px 6px;display:flex;align-items:center;justify-content:center;gap:0}
+#shareTransfer{box-sizing:border-box;width:min(100%,230px);min-height:42px;padding:3px 4px 3px 14px;border:1px solid color-mix(in srgb,var(--theme,#FF7F50) 72%,white);border-radius:999px;background:linear-gradient(135deg,var(--theme,#FF7F50),var(--theme-dark,#D95D36));color:#fff;font-size:13px;font-weight:750;box-shadow:0 3px 9px color-mix(in srgb,var(--theme,#FF7F50) 20%,transparent);display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;transition:filter .15s,transform .15s}
+#shareTransfer:active{transform:scale(.985)}
+#shareTransfer .share-label{flex:1;text-align:center;direction:rtl;white-space:nowrap}
+#shareTransfer .share-arrow{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:var(--theme-dark,var(--theme,#FF7F50));color:#fff;border:1px solid rgba(255,255,255,.25);box-shadow:inset 0 1px 2px rgba(255,255,255,.16)}
+#shareTransfer .share-arrow svg{display:block;width:21px;height:21px}
+@media(max-width:380px){#shareTransfer{width:min(100%,215px);min-height:40px;padding-left:12px;font-size:12px;gap:7px}#shareTransfer .share-arrow{width:32px;height:32px;flex-basis:32px}#shareTransfer .share-arrow svg{width:19px;height:19px}}
+</style>
+<style id="print-actions-row">
+/* Back and share controls share one compact, balanced row below the preview. */
+.share-action{box-sizing:border-box;width:100%;max-width:560px;margin:12px auto 0;padding:0 2px 8px;display:flex;flex-direction:row;direction:ltr;align-items:center;justify-content:space-between;gap:10px}
+/* Keep each control internally RTL while fixing their screen positions: Back left, Share right. */
+.share-action .back-action,#shareTransfer{direction:rtl}
+#shareTransfer,.share-action .back-action{box-sizing:border-box;flex:1 1 0;width:calc(50% - 5px);max-width:none;height:42px;min-height:42px;margin:0;padding:3px 5px;border-radius:999px;display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:inherit;font-size:12px;font-weight:750;line-height:1;white-space:nowrap}
+#shareTransfer{background:linear-gradient(135deg,var(--theme,#FF7F50),var(--theme-dark,#D95D36));color:#fff;border:1px solid color-mix(in srgb,var(--theme,#FF7F50) 72%,white);box-shadow:0 3px 9px color-mix(in srgb,var(--theme,#FF7F50) 20%,transparent)}
+#shareTransfer .share-label{flex:1;min-width:0;text-align:center;direction:rtl;white-space:nowrap;font-size:12px}
+#shareTransfer .share-arrow{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:var(--theme-dark,var(--theme,#FF7F50));color:#fff;border:1px solid rgba(255,255,255,.25)}
+#shareTransfer .share-arrow svg{width:19px;height:19px}
+.share-action .back-action{border:1px solid color-mix(in srgb,var(--theme,#FF7F50) 72%,white);background:linear-gradient(135deg,var(--theme,#FF7F50),var(--theme-dark,#D95D36));color:#fff;box-shadow:0 3px 9px color-mix(in srgb,var(--theme,#FF7F50) 20%,transparent);cursor:pointer}
+.share-action .back-action:active,#shareTransfer:active{transform:scale(.985)}
+.share-action .back-label{flex:1;text-align:center}
+.share-action .back-arrow{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:var(--theme-dark,var(--theme,#FF7F50));border:1px solid rgba(255,255,255,.25);font-size:20px}
+@media(max-width:360px){.share-action{gap:7px}#shareTransfer,.share-action .back-action{font-size:11px;padding:3px}#shareTransfer .share-label{font-size:11px}#shareTransfer .share-arrow,.share-action .back-arrow{width:30px;height:30px;flex-basis:30px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="panel">
+<button class="lang" id="language" type="button">EN</button>
+<button class="style-toggle" id="styleToggle" type="button" aria-expanded="false">نمط</button>
+<div class="style-menu" id="styleMenu" hidden aria-label="اختيار النمط">
+  <button type="button" class="theme-choice" data-theme="flame"><span class="swatch"></span><span> Flame </span></button>
+  <button type="button" class="theme-choice" data-theme="copper"><span class="swatch"></span><span> Copper Patina </span></button>
+  <button type="button" class="theme-choice" data-theme="oxide"><span class="swatch"></span><span> Oxide Blue </span></button>
+  <button type="button" class="theme-choice" data-theme="retro"><span class="swatch"></span><span> Retro Green </span></button>
+  <button type="button" class="theme-choice" data-theme="midnight-plum"><span class="swatch"></span><span> Midnight Plum </span></button>
+  <button type="button" class="theme-choice" data-theme="burgundy"><span class="swatch"></span><span> Burgundy </span></button>
+</div>
+<header>
+<div class="company" data-ar="شركة نفط ميسان" data-en="Misan Oil Company">شركة نفط ميسان</div>
+<h1 data-ar="حساب وقت التحويل" data-en="Change Time Calculator">حساب وقت التحويل</h1>
+</header>
+
+<div class="section" data-ar="بيانات الخزان والعملية" data-en="Tank and Operation Data">بيانات الخزان والعملية</div>
+<label for="operation" data-ar="نوع العملية" data-en="Operation Type">نوع العملية</label>
+<select id="operation">
+<option value="receive" data-ar="استلام النفط" data-en="Oil Receiving">استلام النفط</option>
+<option value="pump" data-ar="ضخ النفط" data-en="Oil Pumping">ضخ النفط</option>
+</select>
+
+<div class="grid tank-transfer">
+<div>
+<label for="fromTank" data-ar="من خزان" data-en="From Tank">من خزان</label>
+<select id="fromTank">
+<option value="TK1001">TK1001</option>
+<option value="TK1002">TK1002</option>
+<option value="TK1003">TK1003</option>
+<option value="TK1004">TK1004</option>
+<option value="TK1005">TK1005</option>
+<option value="TK1006">TK1006</option>
+<option value="TK1007">TK1007</option>
+<option value="TK1008">TK1008</option>
+<option value="TK1009">TK1009</option>
+</select>
+</div>
+<div>
+<label for="toTank" data-ar="إلى خزان" data-en="To Tank">إلى خزان</label>
+<select id="toTank">
+<option value="TK1001">TK1001</option>
+<option value="TK1002">TK1002</option>
+<option value="TK1003">TK1003</option>
+<option value="TK1004">TK1004</option>
+<option value="TK1005">TK1005</option>
+<option value="TK1006">TK1006</option>
+<option value="TK1007">TK1007</option>
+<option value="TK1008">TK1008</option>
+<option value="TK1009">TK1009</option>
+</select>
+</div>
+</div>
+
+<div class="grid">
+<div><label for="current" data-ar="المستوى الحالي (متر)" data-en="Current Level (m)">المستوى الحالي (متر)</label><input id="current" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 3.8" data-en-placeholder="e.g. 3.8"></div>
+<div><label for="target" data-ar="المستوى المطلوب (متر)" data-en="Target Level (m)">المستوى المطلوب (متر)</label><input id="target" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 12" data-en-placeholder="e.g. 12"></div>
+</div>
+
+<div id="receive">
+<label for="rate" data-ar="معدل ارتفاع المستوى (متر/ساعة)" data-en="Level Increase Rate (m/hour)">معدل ارتفاع المستوى (متر/ساعة)</label>
+<input id="rate" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 1.28" data-en-placeholder="e.g. 1.28">
+</div>
+<div id="pump" hidden>
+<label for="flow" data-ar="معدل الضخ (m³/h)" data-en="Pumping Rate (m³/h)">معدل الضخ (m³/h)</label>
+<input id="flow" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 2200" data-en-placeholder="e.g. 2200">
+</div>
+
+
+<div class="section" data-ar="تاريخ ووقت تسجيل المستوى الحالي" data-en="Current Level Date and Time">تاريخ ووقت تسجيل المستوى الحالي</div>
+<label class="edit-toggle" for="editDateTime">
+  <input id="editDateTime" type="checkbox">
+  <span data-ar="تعديل التاريخ والوقت يدوياً" data-en="Manually edit date and time">تعديل التاريخ والوقت يدوياً</span>
+</label>
+<div id="dateTimeEditor" hidden>
+<div class="dategrid">
+<div><label for="day" data-ar="اليوم" data-en="Day">اليوم</label><select id="day"></select></div>
+<div><label for="month" data-ar="الشهر" data-en="Month">الشهر</label><select id="month"></select></div>
+<div><label for="year" data-ar="السنة" data-en="Year">السنة</label><select id="year"></select></div>
+</div>
+<div class="timegrid">
+<div><label for="hour" data-ar="الساعة" data-en="Hour">الساعة</label><select id="hour"></select></div>
+<div><label for="minute" data-ar="الدقيقة" data-en="Minute">الدقيقة</label><select id="minute"></select></div>
+<div><label for="period" data-ar="الفترة" data-en="Period">الفترة</label><select id="period"><option value="AM" data-ar="AM صباحاً" data-en="AM">AM صباحاً</option><option value="PM" data-ar="PM مساءً" data-en="PM">PM مساءً</option></select></div>
+</div>
+<div class="muted live" id="live" data-ar="● الوقت والتاريخ الفعلي للجهاز" data-en="● Current device date and time">● الوقت والتاريخ الفعلي للجهاز</div>
+</div>
+
+<button class="calc" id="calculate" type="button" data-ar="احسب وقت التحويل" data-en="Calculate Change Time">احسب وقت التحويل</button>
+<button class="print-transfer" id="printTransfer" type="button" hidden data-ar="اطبع التحويل" data-en="print">اطبع التحويل</button>
+<div class="error" id="error" role="alert"></div>
+<div class="result" id="result" aria-live="polite">
+<div class="gold" style="font-weight:bold;color:#e9bd64" data-ar="النتيجة المتوقعة" data-en="Expected Result">النتيجة المتوقعة</div>
+<div class="big" id="duration"></div>
+<div class="muted" data-ar="المدة اللازمة لإتمام التحويل" data-en="Time Required to Complete the Change">المدة اللازمة لإتمام التحويل</div>
+<hr style="border:0;border-top:1px solid #71815b;margin:13px 0">
+<div style="color:#e9bd64" data-ar="وقت التحويل" data-en="Change Time">وقت التحويل</div>
+<div class="big" id="arrival"></div>
+<div class="muted" id="arrival-date"></div>
+</div>
+</div>
+<button class="clear" id="clear" type="button" data-ar="إعادة تعيين" data-en="Reset">إعادة تعيين</button>
+<div class="muted footer">By : Mohammed Dheyaa</div>
+</main>
+<section id="printPage" class="print-page" hidden aria-label="معاينة التحويل">
+  <div class="print-preview"><img id="transferImage" alt="بيانات التحويل"></div>
+  <div class="share-action">
+    <button id="closePrint" class="back-action" type="button"><span class="back-label" data-ar="رجوع" data-en="Back">رجوع</span><span class="back-arrow" aria-hidden="true">←</span></button>
+    <button id="shareTransfer" type="button" aria-label="مشاركة الصورة"><span class="share-label" data-ar="مشاركة الصورة" data-en="Share Image">مشاركة الصورة</span><span class="share-arrow" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M7 39c4-13 12-21 25-25l-1-8 12 12-12 12-1-8C19 27 13 32 7 39Z" fill="currentColor"/></svg></span></button>
+  </div>
+</section>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+let manuallyEdited=false,language='ar',calculatedAt=null;
+function setLanguage(lang){language=lang;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.querySelectorAll('[data-ar][data-en]').forEach(el=>{const value=el.dataset[lang];if(el.tagName==='OPTION')el.textContent=value;else el.textContent=value});document.querySelectorAll('[data-en-placeholder]').forEach(el=>{if(el.id!=='current'&&el.id!=='target')el.placeholder=lang==='en'?el.dataset.enPlaceholder:el.getAttribute('placeholder-ar')||({'rate':'مثلاً 1.28','flow':'مثلاً 2200'}[el.id]||'')});updateLevelPlaceholders();$('language').textContent=lang==='ar'?'EN':'AR';$('styleToggle').textContent=lang==='ar'?'نمط':'Style';document.title=lang==='ar'?'حساب وقت التحويل | MOC':'Change Time Calculator | MOC';$('live').textContent=manuallyEdited?(lang==='ar'?'● تاريخ ووقت محددان يدوياً':'● Manually selected date and time'):(lang==='ar'?'● الوقت والتاريخ الفعلي للجهاز':'● Current device date and time');}
+$('language').addEventListener('click',()=>setLanguage(language==='ar'?'en':'ar'));
+const themeNames=['flame','copper','oxide','retro','midnight-plum','burgundy'];
+function applyTheme(theme){
+ if(!themeNames.includes(theme))theme='flame';
+ document.body.classList.remove('theme-flame','theme-copper','theme-oxide','theme-pistachio','theme-retro','theme-midnight-plum','theme-burgundy','olive');
+ document.body.classList.add('theme-'+theme);
+ try{localStorage.setItem('moc-selected-theme',theme)}catch(e){}
+ document.querySelectorAll('.theme-choice').forEach(b=>{
+  b.classList.toggle('selected',b.dataset.theme===theme);
+  b.setAttribute('aria-pressed',String(b.dataset.theme===theme));
+ });
+}
+$('styleToggle').addEventListener('click',()=>{
+ const menu=$('styleMenu');menu.hidden=!menu.hidden;
+ $('styleToggle').setAttribute('aria-expanded',String(!menu.hidden));
+});
+document.querySelectorAll('.theme-choice').forEach(b=>b.addEventListener('click',()=>{
+ applyTheme(b.dataset.theme);$('styleMenu').hidden=true;$('styleToggle').setAttribute('aria-expanded','false');
+}));
+document.addEventListener('click',e=>{
+ if(!e.target.closest('#styleToggle')&&!e.target.closest('#styleMenu')){
+  $('styleMenu').hidden=true;$('styleToggle').setAttribute('aria-expanded','false');
+ }
+});
+let savedTheme='flame';try{savedTheme=localStorage.getItem('moc-selected-theme')||'flame';if(savedTheme==='tangerine')savedTheme='flame';if(savedTheme==='powder')savedTheme='midnight-plum'}catch(e){}
+applyTheme(savedTheme);
+const messages={incomplete:['يرجى إكمال الحقول واختيار تاريخ ووقت صحيحين.','Complete all fields and select a valid date and time.'],levels:['تحقق من مستويات الخزان.','Check the tank levels.'],rate:['معدل العملية يجب أن يكون أكبر من صفر.','The operation rate must be greater than zero.'],equal:['المستوى الحالي يساوي المستوى المطلوب.','The current level equals the target level.'],receive:['في عملية استلام النفط يجب أن يكون المستوى المطلوب أعلى من الحالي.','For oil receipt, the target level must be higher than the current level.'],pump:['في عملية ضخ النفط يجب أن يكون المستوى المطلوب أقل من الحالي.','For oil pumping, the target level must be lower than the current level.'],calc:['تعذر حساب وقت التحويل.','Unable to calculate the change time.']};
+function message(key){return messages[key][language==='ar'?0:1]}
+
+function options(id,from,to,format=x=>String(x)){
+ const s=$(id);
+ for(let i=from;i<=to;i++){const o=document.createElement('option');o.value=String(i);o.textContent=format(i);s.appendChild(o)}
+}
+options('day',1,31,pad);options('month',1,12,pad);
+const y=new Date().getFullYear();options('year',y-2,y+10);
+options('hour',1,12,pad);options('minute',0,59,pad);
+function setNow(){
+ const d=new Date();
+ $('day').value=String(d.getDate());$('month').value=String(d.getMonth()+1);$('year').value=String(d.getFullYear());
+ $('hour').value=String(d.getHours()%12||12);$('minute').value=String(d.getMinutes());
+ $('period').value=d.getHours()>=12?'PM':'AM';
+ $('live').textContent=language==='ar'?'● الوقت والتاريخ الفعلي للجهاز':'● Current device date and time';
+}
+function updateLevelPlaceholders(){
+ const pump=$('operation').value==='pump';
+ const currentValue=pump?'12':'3.8',targetValue=pump?'3.8':'12';
+ $('current').placeholder=language==='en'?'e.g. '+currentValue:'مثلاً '+currentValue;
+ $('target').placeholder=language==='en'?'e.g. '+targetValue:'مثلاً '+targetValue;
+}
+function toggle(){
+ const p=$('operation').value==='pump';$('receive').hidden=p;$('pump').hidden=!p;
+ updateLevelPlaceholders();
+ $('result').classList.remove('show');$('printTransfer').hidden=true;$('error').classList.remove('show');
+}
+function selectedDate(){
+ if(!$('editDateTime').checked)return new Date();
+ const day=+$('day').value,month=+$('month').value,year=+$('year').value,hour=+$('hour').value,minute=+$('minute').value;
+ if(!day||!month||!year||!hour||$('minute').value===''||!$('period').value)return null;
+ const dt=new Date(year,month-1,day,(hour%12)+($('period').value==='PM'?12:0),minute,0,0);
+ return dt.getFullYear()===year&&dt.getMonth()===month-1&&dt.getDate()===day?dt:null;
+}
+['day','month','year','hour','minute','period'].forEach(id=>$(id).addEventListener('change',()=>{
+ if($('editDateTime').checked){
+  manuallyEdited=true;$('live').textContent=language==='ar'?'● تاريخ ووقت محددان يدوياً':'● Manually selected date and time';
+ }
+ $('result').classList.remove('show');
+}));
+$('editDateTime').addEventListener('change',()=>{
+ const enabled=$('editDateTime').checked;
+ $('dateTimeEditor').hidden=!enabled;
+ manuallyEdited=enabled;
+ $('live').textContent=enabled
+  ?(language==='ar'?'● تاريخ ووقت محددان يدوياً':'● Manually selected date and time')
+  :(language==='ar'?'● الوقت والتاريخ الفعلي للجهاز':'● Current device date and time');
+ $('result').classList.remove('show');
+ $('error').classList.remove('show');
+});
+$('operation').addEventListener('change',toggle);
+$('calculate').addEventListener('click',()=>{
+ $('error').classList.remove('show');$('result').classList.remove('show');
+ const pump=$('operation').value==='pump',a=Number($('current').value),b=Number($('target').value);
+ const rateInput=pump?'flow':'rate',raw=Number($(rateInput).value);
+ // Keep the existing conversion formula unchanged.
+ const rate=pump?raw*6.289/11111:raw,dt=selectedDate();let msg='';
+ if($('current').value===''||$('target').value===''||$(rateInput).value===''||!dt)msg=message('incomplete');
+ else if(!Number.isFinite(a)||!Number.isFinite(b)||a<0||b<0)msg=message('levels');
+ else if(!Number.isFinite(rate)||rate<=0)msg=message('rate');
+ else if(a===b)msg=message('equal');
+ else if(!pump&&b<a)msg=message('receive');
+ else if(pump&&b>a)msg=message('pump');
+ if(msg){$('error').textContent=msg;$('error').classList.add('show');return}
+ const mins=Math.round(Math.abs(b-a)/rate*60),out=new Date(dt.getTime()+mins*60000);
+ if(!Number.isFinite(out.getTime())){$('error').textContent=message('calc');$('error').classList.add('show');return}
+ $('duration').textContent=language==='ar'?(Math.floor(mins/60)+' ساعة و '+mins%60+' دقيقة'):(Math.floor(mins/60)+' hours And '+mins%60+' minutes');
+ $('arrival').textContent=pad(out.getHours()%12||12)+':'+pad(out.getMinutes())+' '+(out.getHours()>=12?'PM':'AM');
+ $('arrival-date').textContent=language==='ar'?('التاريخ: '+pad(out.getDate())+'/'+pad(out.getMonth()+1)+'/'+out.getFullYear()):('Date: '+pad(out.getDate())+'/'+pad(out.getMonth()+1)+'/'+out.getFullYear());
+ $('result').classList.add('show');
+ calculatedAt=new Date();
+ $('printTransfer').hidden=false;
+ setTimeout(()=>{prepareShare().catch(()=>{})},60);
+});
+function xmlSafe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));}
+function getTransferData(){
+ const stamp=calculatedAt||new Date(),en=language==='en';
+ const weekdaysAr=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+ const weekdaysEn=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+ const date=pad(stamp.getDate())+'/'+pad(stamp.getMonth()+1)+'/'+stamp.getFullYear()+' - '+(en?weekdaysEn:weekdaysAr)[stamp.getDay()];
+ const rawTime=$('arrival').textContent.trim();
+ const time=en?rawTime:rawTime.replace(/\s*AM$/i,' صباحاً').replace(/\s*PM$/i,' مساءً');
+ const from=$('fromTank').value,to=$('toTank').value;
+ const operation=$('operation').value==='pump'?(en?'Change Pumping':'تحويل الضخ'):(en?'Change Receiving':'تحويل الاستلام');
+ const paletteKey=['flame','copper','oxide','retro','midnight-plum','burgundy'].find(t=>document.body.classList.contains('theme-'+t))||'flame';
+ const palettes={
+  flame:{start:'#FF7F50',end:'#F36B3D',page:'#FFF1EC',paper:'#FFFFFF',border:'#FFD0C1',accent:'#FF7F50',box:'#FFF5F1',boxBorder:'#FFD0C1',muted:'#A66F5D',ink:'#713522',shadow:'#B95A3B'},
+  copper:{start:'#B5602F',end:'#93451F',page:'#F5EAE3',paper:'#FFFFFF',border:'#E8C8B5',accent:'#B5602F',box:'#FBF3EE',boxBorder:'#E8C8B5',muted:'#967461',ink:'#713B20',shadow:'#8C4B2B'},
+  oxide:{start:'#16394F',end:'#0E2D40',page:'#E8F0F4',paper:'#FFFFFF',border:'#C8D9E2',accent:'#16394F',box:'#F0F5F8',boxBorder:'#C8D9E2',muted:'#6E8796',ink:'#16394F',shadow:'#244B61'},
+  retro:{start:'#087A43',end:'#006732',page:'#E8F0E9',paper:'#FFFFFF',border:'#C8DFD0',accent:'#006732',box:'#EFF7F1',boxBorder:'#C7DFCF',muted:'#71877A',ink:'#004D27',shadow:'#285B3D'},
+  'midnight-plum':{start:'#3B153A',end:'#2B0E2B',page:'#F3EAF2',paper:'#FFFFFF',border:'#E2D0E0',accent:'#3B153A',box:'#F8F1F7',boxBorder:'#E2D0E0',muted:'#80657E',ink:'#3B153A',shadow:'#5B3157'},
+  burgundy:{start:'#741C2A',end:'#60131E',page:'#F5E9EB',paper:'#FFFFFF',border:'#E6C9CE',accent:'#60131E',box:'#FBF2F3',boxBorder:'#E6C9CE',muted:'#92747A',ink:'#60131E',shadow:'#6B2631'}
+ };
+ const palette=palettes[paletteKey];
+ const dir=en?'ltr':'rtl';
+ return {en,dir,palette,operation,date,time,from,to,key:[paletteKey,en,operation,date,time,from,to].join('|')};
+}
+function makeTransferSvg(){
+ const {en,dir,palette,operation,date,time,from,to}=getTransferData();
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="980" viewBox="0 0 1080 980">
+ <defs><linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${palette.start}"/><stop offset="1" stop-color="${palette.end}"/></linearGradient><filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="15" stdDeviation="18" flood-color="${palette.shadow}" flood-opacity=".13"/></filter></defs>
+ <rect width="1080" height="980" fill="${palette.page}"/><rect x="42" y="42" width="996" height="896" rx="48" fill="${palette.paper}" stroke="${palette.border}" stroke-width="2" filter="url(#shadow)"/><path d="M42 90 Q42 42 90 42 H990 Q1038 42 1038 90 V290 Q1038 365 965 390 Q540 520 115 390 Q42 365 42 290 Z" fill="url(#orange)"/>
+ <rect x="250" y="112" width="580" height="100" rx="50" fill="#ffffff" fill-opacity=".19" stroke="#ffffff" stroke-opacity=".42" stroke-width="2"/><text x="540" y="178" text-anchor="middle" font-family="Tahoma,Arial,sans-serif" font-size="50" font-weight="bold" fill="#fff" direction="${dir}">${xmlSafe(operation)}</text><text x="540" y="330" text-anchor="middle" font-family="Tahoma,Arial,sans-serif" font-size="40" fill="#fff" direction="${dir}">${xmlSafe(date)}</text>
+ <text x="540" y="545" text-anchor="middle" font-family="Tahoma,Arial,sans-serif" font-size="30" font-weight="bold" fill="${palette.muted}" direction="${dir}">${en?'Time':'الوقت'}</text><text x="540" y="630" text-anchor="middle" font-family="Tahoma,Arial,sans-serif" font-size="76" font-weight="bold" fill="${palette.accent}" direction="${dir}">${xmlSafe(time)}</text>
+ <rect x="115" y="700" width="300" height="160" rx="28" fill="${palette.box}" stroke="${palette.boxBorder}" stroke-width="3"/><rect x="665" y="700" width="300" height="160" rx="28" fill="${palette.box}" stroke="${palette.boxBorder}" stroke-width="3"/><text x="265" y="800" text-anchor="middle" font-family="Arial,Tahoma,sans-serif" font-size="72" font-weight="bold" fill="${palette.ink}" direction="ltr">${xmlSafe(from)}</text><text x="815" y="800" text-anchor="middle" font-family="Arial,Tahoma,sans-serif" font-size="72" font-weight="bold" fill="${palette.ink}" direction="ltr">${xmlSafe(to)}</text><circle cx="540" cy="780" r="48" fill="url(#orange)"/><path d="M510 780 H570 M552 760 L572 780 L552 800" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+ return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+/* ===== Fast share: draw directly on canvas (no SVG filter), JPEG, pre-built at calculate time ===== */
+function rrPath(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function hexA(h,a){const n=parseInt(h.slice(1),16);return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')';}
+function renderTransferCanvas(d){
+ const cv=document.createElement('canvas');cv.width=1080;cv.height=980;
+ const x=cv.getContext('2d'),p=d.palette;
+ x.fillStyle=p.page;x.fillRect(0,0,1080,980);
+ x.save();x.shadowColor=hexA(p.shadow,.13);x.shadowBlur=36;x.shadowOffsetY=15;x.fillStyle=p.paper;rrPath(x,42,42,996,896,48);x.fill();x.restore();
+ x.lineWidth=2;x.strokeStyle=p.border;rrPath(x,42,42,996,896,48);x.stroke();
+ const g=x.createLinearGradient(42,42,1038,455);g.addColorStop(0,p.start);g.addColorStop(1,p.end);
+ x.fillStyle=g;x.fill(new Path2D('M42 90 Q42 42 90 42 H990 Q1038 42 1038 90 V290 Q1038 365 965 390 Q540 520 115 390 Q42 365 42 290 Z'));
+ x.fillStyle='rgba(255,255,255,.19)';rrPath(x,250,112,580,100,50);x.fill();
+ x.lineWidth=2;x.strokeStyle='rgba(255,255,255,.42)';x.stroke();
+ x.textAlign='center';x.textBaseline='alphabetic';
+ const T=(str,px,py,font,color,dir)=>{x.direction=dir;x.font=font;x.fillStyle=color;x.fillText(str,px,py);};
+ const F='Tahoma,Arial,sans-serif';
+ T(d.operation,540,178,'bold 50px '+F,'#fff',d.dir);
+ T(d.date,540,330,'40px '+F,'#fff',d.dir);
+ T(d.en?'Time':'الوقت',540,545,'bold 30px '+F,p.muted,d.dir);
+ T(d.time,540,630,'bold 76px '+F,p.accent,d.dir);
+ x.lineWidth=3;x.fillStyle=p.box;x.strokeStyle=p.boxBorder;
+ [115,665].forEach(bx=>{rrPath(x,bx,700,300,160,28);x.fill();x.stroke();});
+ const F2='Arial,Tahoma,sans-serif';
+ T(d.from,265,800,'bold 72px '+F2,p.ink,'ltr');
+ T(d.to,815,800,'bold 72px '+F2,p.ink,'ltr');
+ const g2=x.createLinearGradient(492,732,588,828);g2.addColorStop(0,p.start);g2.addColorStop(1,p.end);
+ x.fillStyle=g2;x.beginPath();x.arc(540,780,48,0,Math.PI*2);x.fill();
+ x.lineWidth=10;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#fff';x.stroke(new Path2D('M510 780 H570 M552 760 L572 780 L552 800'));
+ return cv;
+}
+const shareState={key:null,promise:null};
+function getCapPlugin(n){try{const cap=window.Capacitor;return (cap&&cap.Plugins&&cap.Plugins[n])||(cap&&typeof cap.registerPlugin==='function'?cap.registerPlugin(n):null);}catch(e){return null;}}
+function blobToB64(b){return new Promise((res,rej)=>{const r=new FileReader();r.onloadend=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(b);});}
+function prepareShare(){
+ const d=getTransferData();
+ if(shareState.key===d.key&&shareState.promise)return shareState.promise;
+ shareState.key=d.key;
+ const pr=(async()=>{
+  const blob=await new Promise(r=>renderTransferCanvas(d).toBlob(r,'image/jpeg',.92));
+  if(!blob)throw new Error('blob');
+  let uri=null;const FS=getCapPlugin('Filesystem');
+  if(FS&&typeof FS.writeFile==='function'){
+   try{const saved=await FS.writeFile({path:'MOC-Transfer.jpg',data:await blobToB64(blob),directory:'CACHE'});uri=saved.uri;}catch(e){}
+  }
+  return {blob,uri};
+ })();
+ shareState.promise=pr;
+ pr.catch(()=>{if(shareState.promise===pr){shareState.promise=null;shareState.key=null;}});
+ return pr;
+}
+let mocToast=null;
+function showToast(msg){if(!mocToast){mocToast=document.createElement('div');mocToast.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:99998;background:rgba(0,0,0,.82);color:#fff;padding:11px 20px;border-radius:999px;font:700 14px Tahoma,Arial,sans-serif;direction:rtl';document.body.appendChild(mocToast);}mocToast.textContent=msg;mocToast.style.display='block';}
+function hideToast(){if(mocToast)mocToast.style.display='none';}
+function showShareFallback(blob,ar){
+ const url=URL.createObjectURL(blob);
+ const ov=document.createElement('div');
+ ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;direction:rtl;font-family:Tahoma,Arial,sans-serif';
+ ov.innerHTML='<div style="color:#fff;font-size:14px;text-align:center;line-height:1.8">'+(ar?'اضغط مطولاً على الصورة ثم اختر حفظ أو مشاركة':'Long-press the image, then choose Save or Share')+'</div><img src="'+url+'" style="max-width:100%;max-height:68vh;border-radius:12px;background:#fff"><div style="display:flex;gap:10px;width:100%;max-width:360px"><a href="'+url+'" download="MOC-Transfer.jpg" style="flex:1;text-align:center;background:#f47d3d;color:#fff;padding:13px;border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px">'+(ar?'حفظ الصورة':'Save image')+'</a><button id="mocClose" type="button" style="flex:1;background:#fff;color:#333;padding:13px;border-radius:12px;font-weight:bold;font-size:14px;border:0">'+(ar?'إغلاق':'Close')+'</button></div>';
+ document.body.appendChild(ov);
+ ov.querySelector('#mocClose').onclick=()=>{ov.remove();URL.revokeObjectURL(url);};
+}
+let sharing=false;
+$('shareTransfer').addEventListener('click',async()=>{
+ const ar=language==='ar';
+ if(!$('result').classList.contains('show')){
+  alert(ar?'احسب التحويل أولاً ثم اضغط مشاركة الصورة':'Calculate the transfer first, then share the image');return;
+ }
+ if(sharing)return;sharing=true;
+ const slow=setTimeout(()=>showToast(ar?'جارٍ تجهيز الصورة…':'Preparing image…'),120);
+ const isCancel=err=>{const m=String((err&&(err.message||err.errorMessage||err.code))||err);return /cancel|abort|dismiss/i.test(m)||(err&&err.name==='AbortError');};
+ try{
+  const {blob,uri}=await prepareShare();
+  clearTimeout(slow);hideToast();
+  const Share=getCapPlugin('Share');
+  if(uri&&Share&&typeof Share.share==='function'){
+   try{await Share.share({title:ar?'تحويل MOC':'MOC Transfer',files:[uri],dialogTitle:ar?'مشاركة الصورة':'Share image'});return;}
+   catch(err){if(isCancel(err))return;}
+  }
+  try{
+   const file=new File([blob],'MOC-Transfer.jpg',{type:'image/jpeg'});
+   if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({files:[file],title:ar?'تحويل MOC':'MOC Transfer'});return;}
+  }catch(err){if(isCancel(err))return;}
+  showShareFallback(blob,ar);
+ }catch(e){alert(ar?'تعذر تجهيز الصورة':'Could not create image');}
+ finally{clearTimeout(slow);hideToast();sharing=false;}
+});
+
+
+$('printTransfer').addEventListener('click',()=>{
+ $('transferImage').src=makeTransferSvg();
+ $('printPage').hidden=false;
+});
+$('closePrint').addEventListener('click',()=>{$('printPage').hidden=true;});
+
+$('clear').addEventListener('click',()=>{
+ ['current','target','rate','flow'].forEach(id=>$(id).value='');
+ $('printTransfer').hidden=true;$('printPage').hidden=true;calculatedAt=null;$('operation').value='receive';$('editDateTime').checked=false;$('dateTimeEditor').hidden=true;manuallyEdited=false;setNow();toggle();
+});
+setNow();toggle();setLanguage('ar');setInterval(()=>{if(!manuallyEdited)setNow()},10000);
+})();
+</script>
+<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
+</body>
+</html>
