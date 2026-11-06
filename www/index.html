@@ -254,6 +254,13 @@ body.theme-burgundy header{background:linear-gradient(135deg,rgba(255,255,255,.2
 .share-action .back-arrow{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:var(--theme-dark,var(--theme,#FF7F50));border:1px solid rgba(255,255,255,.25);font-size:20px}
 @media(max-width:360px){.share-action{gap:7px}#shareTransfer,.share-action .back-action{font-size:11px;padding:3px}#shareTransfer .share-label{font-size:11px}#shareTransfer .share-arrow,.share-action .back-arrow{width:30px;height:30px;flex-basis:30px}}
 </style>
+<style id="ios-safe-area">
+:root{--sa:max(0px,calc(env(safe-area-inset-top,0px) - 22px))}
+header{padding-top:calc(25px + var(--sa))}
+.lang{top:calc(9px + var(--sa))!important}
+.style-toggle{top:calc(50px + var(--sa))!important}
+.style-menu{top:calc(124px + var(--sa))}
+</style>
 </head>
 <body>
 <main class="wrap">
